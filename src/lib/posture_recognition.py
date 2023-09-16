@@ -7,7 +7,8 @@ from torchvision.models.segmentation import deeplabv3_resnet101
 from torchvision import transforms
 
 import numpy as np
- 
+
+PERSON = 15
 
 def get_contour_mask():
     def make_deeplab(device):
@@ -35,7 +36,13 @@ def get_contour_mask():
         with torch.no_grad():
             output = deeplab(input_batch.to(device))['out'][0]
         output_predictions = output.argmax(0).cpu().numpy()
-        return (output_predictions == 15)
+        return (output_predictions == PERSON)
     mask = apply_deeplab(deeplab, image, device)
-
+    print(mask.shape)
     return mask
+
+                            
+
+def is_slouching(mask_proper_posture, mask,threshold) -> bool:
+    wrong_doings = sum(abs(int(p1) - int(p2)) for (p1,p2) in zip(mask_proper_posture.flatten(), mask.flatten()) )
+    return wrong_doings > threshold
