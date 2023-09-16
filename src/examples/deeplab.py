@@ -33,7 +33,7 @@ def apply_deeplab(deeplab, img, device):
     output_predictions = output.argmax(0).cpu().numpy()
     return (output_predictions == 15)
 mask = apply_deeplab(deeplab, image, device)
-
+print(mask.shape)
 plt.imshow(mask, cmap="gray")
 plt.show()
 
