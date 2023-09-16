@@ -1,0 +1,79 @@
+
+import cv2 as cv2
+
+# from src.lib.posture_recognition import get_basic_contours3
+
+
+cap = cv2.VideoCapture(0)
+
+if not cap.isOpened():
+ print("Cannot open camera")
+ exit()
+while True:
+ # read frame1, resize and convert to grayscale
+    ret, frame1 = cap.read()
+    if frame1 is None:
+        break
+    gray1 = cv2.cvtColor(frame1, cv2.COLOR_BGR2GRAY)
+
+    # read frame2, resize and convert to grayscale
+    ret2, frame2 = cap.read()
+    if frame2 is None:
+        break
+    gray2 = cv2.cvtColor(frame2, cv2.COLOR_BGR2GRAY)
+
+    # compute the difference between frames
+    dist = cv2.absdiff(gray1, gray2)
+    # blur image
+    blurred = cv2.GaussianBlur(dist, (9, 9), 0)
+
+    # global thresholding
+    ret3, th1 = cv2.threshold(blurred, 85, 255, cv2.THRESH_BINARY)
+    print(th1.dtype)
+
+    cnts = cv2.findContours(th1, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+
+    # other way to find contours = same error
+    # hierarchy, contours = cv2.findContours(th1, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+
+    cv2.imshow('dist', frame1)
+    cv2.imshow('thresh', th1)
+    cv2.imshow('blurred', blurred)
+
+    if cv2.waitKey(1) == ord('q'):
+        break
+# When everything done, release the capture
+cap.release()
+cv2.destroyAllWindows()
+
+
+
+#  # Capture frame-by-frame
+#  ret, frame = cap.read()
+#  # if frame is read correctly ret is True
+#  if not ret:
+#     print("Can't receive frame (stream end?). Exiting ...")
+#     break
+#  #contours = get_basic_contours3(frame)
+
+#  #finds countrs within frame and draws contour (source image, contours passed as list, index of contours -1 for all, colour, thickness)
+#  #frame = cv.drawContours(frame, contours, -1, (0,255,0)) 
+#  #frame = get_basic_contours3(frame)
+
+
+ 
+#  frame = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
+
+#  # detect the contours on the binary image using cv2.CHAIN_APPROX_NONE
+#  contours, hierarchy = cv.findContours(image=frame, mode=cv.RETR_TREE, method=cv.CHAIN_APPROX_NONE)
+                                      
+#  # draw contours on the original image
+#  image_copy = frame.copy()
+#  cv.drawContours(image=image_copy, contours=contours, contourIdx=-1, color=(0, 255, 0), thickness=2, lineType=cv.LINE_AA)
+                
+#  # see the results
+#  cv.imshow('None approximation', image_copy) 
+
+#  # Display the resulting frame
+#  # cv.imshow('frame', frame)
+ 
