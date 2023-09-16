@@ -25,19 +25,13 @@ while True:
     # compute the difference between frames
     dist = cv2.absdiff(gray1, gray2)
     # blur image
-    blurred = cv2.GaussianBlur(dist, (9, 9), 0)
+    blurred = cv2.GaussianBlur(dist, (10, 10), 0)
 
     # global thresholding
-    ret3, th1 = cv2.threshold(blurred, 85, 255, cv2.THRESH_BINARY)
-    print(th1.dtype)
-
-    cnts = cv2.findContours(th1, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-
-    # other way to find contours = same error
-    # hierarchy, contours = cv2.findContours(th1, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    threshold = cv2.threshold(blurred, 85, 255, cv2.THRESH_BINARY)   
+    contours = cv2.findContours(threshold, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
     cv2.imshow('dist', frame1)
-    cv2.imshow('thresh', th1)
     cv2.imshow('blurred', blurred)
 
     if cv2.waitKey(1) == ord('q'):
