@@ -1,7 +1,10 @@
 
 import cv2 as cv
 
-from lib.posture_recognition import get_basic_contours
+from src.lib.posture_recognition import get_basic_contours
+
+
+
 
 
 cap = cv.VideoCapture(0)
