@@ -3,7 +3,7 @@ import psycopg2
 import json
 import numpy
 from json import JSONEncoder
-from datetime import datetime 
+from datetime import datetime, timezone 
 import os
 pg_conn_string = os.environ["DATABASE_URL"]
 print(pg_conn_string)
@@ -26,8 +26,8 @@ def create_table():
 
 
 def pushes_mask_to_database(mask, score):
-    dt = datetime.now()
-    timestamp = datetime.timestamp(dt)
+    dt = datetime.now(timezone.utc)
+    
     mask_data = {"array" : mask}
     encoded_mask = json.dumps(mask_data, cls=NumpyArrayEncoder)
     with psycopg2.connect(pg_conn_string) as conn:
@@ -35,7 +35,7 @@ def pushes_mask_to_database(mask, score):
         with conn.cursor() as cur:
 
             cur.execute("INSERT INTO masks (mask, time, score) VALUES (%s, %s, %s)",
-           (encoded_mask, timestamp, score))
+           (encoded_mask, dt, score))
             
             conn.commit()
 
@@ -53,7 +53,6 @@ def get_mask_and_timestamp_from_database():
             conn.commit()
             return map(database_mask_to_normal_mask, results)
         
-
 
 
 

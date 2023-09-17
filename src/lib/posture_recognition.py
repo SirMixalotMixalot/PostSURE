@@ -12,7 +12,7 @@ PERSON = 15
 
 
 
-def get_contour_mask():
+def get_contour_mask(camera):
     def make_deeplab(device):
         deeplab = deeplabv3_resnet101(weights=DeepLabV3_ResNet101_Weights.DEFAULT).to(device)
         deeplab.eval()
@@ -21,7 +21,7 @@ def get_contour_mask():
     device = torch.device("cpu")
     deeplab = make_deeplab(device)
 
-    camera = cv2.VideoCapture(0)
+    
     _, image = camera.read()
 
     k = min(1.0, 1024/max(image.shape[0], image.shape[1]))
