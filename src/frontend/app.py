@@ -2,6 +2,7 @@
 import customtkinter as ctk
 from PIL import Image
 import cv2
+from pyler import notification 
 
 ctk.set_appearance_mode("System")
 ctk.set_default_color_theme("green")
@@ -84,6 +85,14 @@ class StarterFrame(ctk.CTkFrame):
 
 # class FirstFrame(ctk.CTkFrame):
 #     def __init__(self, container):
+
+def notification():
+    notification.notify(
+    title = 'POSTURE',
+    message = 'Your posture is bad',
+    app_icon = None,
+    timeout = 20,
+)
 
 
 if __name__ == "__main__":
