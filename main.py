@@ -2,6 +2,7 @@
 import customtkinter as ctk
 from PIL import Image
 import cv2
+from src.lib.posture_recognition import get_contour_mask, is_slouching 
 
 ctk.set_appearance_mode("System")
 ctk.set_default_color_theme("green")
@@ -34,11 +35,17 @@ class StarterFrame(ctk.CTkFrame):
                                    font=('Helvetica Bold', 40), wraplength=400)
         self.header.place(relx=0.5, rely=0.17, anchor=ctk.CENTER)
 
-        def change_frame():
+        self.taken = False
+
+        def change_frame_snapshot():
             self.intro_frame.place_forget()
             self.outro_frame.tkraise()
             self.outro_frame.place(relx=0.5, rely=0.96, anchor=ctk.S)
+            taken=True
+            proper_mask, image = get_contour_mask() # save current frame as proper picture 
+            # change display to picture 
 
+        # Step 1 of set up: take initial photo
         self.intro_frame = ctk.CTkFrame(master=self.gui_frame, width=380, height=320)
         self.intro_frame.place(relx=0.5, rely=0.96, anchor=ctk.S)
 
@@ -47,9 +54,10 @@ class StarterFrame(ctk.CTkFrame):
         self.intro_prompt.place(relx=0.5, rely=0.2, anchor=ctk.CENTER)
 
         self.snapshot = ctk.CTkButton(master=self.intro_frame, width=300, height=150, text="Take snapshot",
-                                      font=('Helvetica', 30), command=change_frame)
+                                      font=('Helvetica', 30), command=change_frame_snapshot)
         self.snapshot.place(relx=0.5, rely=0.6, anchor=ctk.CENTER)
 
+        # Step 2 of set up: verify photos 
         self.outro_frame = ctk.CTkFrame(master=self.gui_frame, width=380, height=320)
         self.outro_frame.place(relx=0.5, rely=0.96, anchor=ctk.S)
 
@@ -61,14 +69,18 @@ class StarterFrame(ctk.CTkFrame):
         self.retake = ctk.CTkButton(master=self.outro_frame, width=150, height=100, text="Retake",
                                     font=('Helvetica', 30),)
         self.retake.place(relx=0.25, rely=0.6, anchor=ctk.CENTER)
+        
         self.done = ctk.CTkButton(master=self.outro_frame, width=150, height=100, text="Done",
                                   font=('Helvetica', 30),)
         self.done.place(relx=0.75, rely=0.6, anchor=ctk.CENTER)
+ 
         self.outro_frame.place_forget()
 
         cap = cv2.VideoCapture(0)
 
         def show_frames():
+            if self.taken: 
+                return 
             # Get the latest frame and convert into Image
             cv2image = cv2.cvtColor(cap.read()[1], cv2.COLOR_BGR2RGB)
             img = Image.fromarray(cv2image)
