@@ -10,6 +10,8 @@ import numpy as np
 
 PERSON = 15
 
+
+
 def get_contour_mask():
     def make_deeplab(device):
         deeplab = deeplabv3_resnet101(weights=DeepLabV3_ResNet101_Weights.DEFAULT).to(device)
@@ -39,7 +41,7 @@ def get_contour_mask():
         return (output_predictions == PERSON)
     mask = apply_deeplab(deeplab, image, device)
     
-    return mask
+    return (mask, image) 
 
                             
 
