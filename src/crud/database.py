@@ -1,5 +1,5 @@
 import os
-import psycopg
+import psycopg2
 import json
 import numpy
 from json import JSONEncoder
@@ -14,7 +14,7 @@ class NumpyArrayEncoder(JSONEncoder):
         return JSONEncoder.default(self, obj)
 
 def create_table():
-    with psycopg.connect(pg_conn_string) as conn:
+    with psycopg2.connect(pg_conn_string) as conn:
 
         with conn.cursor() as cur:
 
@@ -30,7 +30,7 @@ def pushes_mask_to_database(mask, score):
     timestamp = datetime.timestamp(dt)
     mask_data = {"array" : mask}
     encoded_mask = json.dumps(mask_data, cls=NumpyArrayEncoder)
-    with psycopg.connect(pg_conn_string) as conn:
+    with psycopg2.connect(pg_conn_string) as conn:
 
         with conn.cursor() as cur:
 
@@ -46,7 +46,7 @@ def database_mask_to_normal_mask(database_values):
 
 
 def get_mask_and_timestamp_from_database():
-    with psycopg.connect(pg_conn_string) as conn:
+    with psycopg2.connect(pg_conn_string) as conn:
         with conn.cursor() as cur:
             results = cur.execute("SELECT (mask,time,score) from masks").fetchall()
 

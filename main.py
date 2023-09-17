@@ -2,6 +2,7 @@
 import customtkinter as ctk
 from PIL import Image
 import cv2
+from src.crud.database import pushes_mask_to_database
 from src.lib.posture_recognition import get_contour_mask, is_slouching 
 
 ctk.set_appearance_mode("System")
@@ -36,13 +37,16 @@ class StarterFrame(ctk.CTkFrame):
         self.header.place(relx=0.5, rely=0.17, anchor=ctk.CENTER)
 
         self.taken = False
-
+        self.mask = [[]]
+        
         def change_frame_snapshot():
             self.intro_frame.place_forget()
             self.outro_frame.tkraise()
             self.outro_frame.place(relx=0.5, rely=0.96, anchor=ctk.S)
             taken=True
             proper_mask, image = get_contour_mask() # save current frame as proper picture 
+            self.proper_mask = proper_mask
+            self.image = image
             # change display to picture 
 
         # Step 1 of set up: take initial photo
@@ -71,7 +75,7 @@ class StarterFrame(ctk.CTkFrame):
         self.retake.place(relx=0.25, rely=0.6, anchor=ctk.CENTER)
         
         self.done = ctk.CTkButton(master=self.outro_frame, width=150, height=100, text="Done",
-                                  font=('Helvetica', 30),)
+                                  font=('Helvetica', 30),command=lambda: pushes_mask_to_database(self.proper_mask, 100))
         self.done.place(relx=0.75, rely=0.6, anchor=ctk.CENTER)
  
         self.outro_frame.place_forget()
