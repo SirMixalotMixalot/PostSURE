@@ -86,7 +86,10 @@ class StarterFrame(ctk.CTkFrame):
             if self.taken: 
                 return 
             # Get the latest frame and convert into Image
-            cv2image = cv2.cvtColor(cap.read()[1], cv2.COLOR_BGR2RGB)
+            res, mask = cap.read()
+            if not res:
+                return
+            cv2image = cv2.cvtColor(mask, cv2.COLOR_BGR2RGB)
             img = Image.fromarray(cv2image)
             # Convert image to PhotoImage
             imgtk = ctk.CTkImage(img, size=(640, 480))
