@@ -43,11 +43,11 @@ def get_contour_mask():
 
                             
 
-def is_slouching(mask_proper_posture, mask,threshold) -> bool:
+def is_slouching(mask_proper_posture, mask,threshold) -> (bool, int):
     wrong_doings = 0
     total_pixels = mask.shape[0] * mask.shape[1]
     for (p1,p2) in zip(mask_proper_posture.flatten(), mask.flatten()):
         wrong_doings += abs(int(p1) - int(p2))
     print(wrong_doings)
     print(total_pixels)
-    return (wrong_doings/total_pixels) > threshold
+    return ((wrong_doings/total_pixels) > threshold, wrong_doings/total_pixels * 100)
